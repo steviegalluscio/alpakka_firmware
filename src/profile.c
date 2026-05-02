@@ -65,7 +65,7 @@ void Profile__report(Profile *self) {
     self->left_thumbstick.report(&self->left_thumbstick);
     #if defined DEVICE_ALPAKKA_V0
         self->dhat.report(&self->dhat);
-    #elif defined DEVICE_ALPAKKA_V1
+    #elif defined DEVICE_ALPAKKA_V1 || DEVICE_ALPAKKA_LITE
         self->right_thumbstick.report(&self->right_thumbstick);
     #endif
     self->gyro.report(&self->gyro);

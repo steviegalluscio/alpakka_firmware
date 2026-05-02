@@ -4,6 +4,7 @@
 #pragma once
 #include <stdint.h>
 #include <stdbool.h>
+#include <hardware/clocks.h>
 
 #define LABEL_CONTROLLER "Alpakka controller"
 #define LABEL_DONGLE     "Wireless dongle   "
@@ -14,6 +15,12 @@
     #define REPORT_TIMEOUT_US 500000  // 0.5 seconds.
 #else
     #define REPORT_TIMEOUT_US 10000000  // 10 seconds.
+#endif
+
+#if defined DEVICE_ALPAKKA_LITE
+    #define DEVICE_SYS_CLOCK  204000
+#else
+    #define DEVICE_SYS_CLOCK  125000
 #endif
 
 typedef enum {

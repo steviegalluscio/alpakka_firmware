@@ -224,6 +224,7 @@ void led_board_blink() {
 }
 
 void led_init_each(uint8_t pin) {
+    if (pin == PIN_NONE) return;
     gpio_set_function(pin, GPIO_FUNC_PWM);
     uint8_t slice_num = pwm_gpio_to_slice_num(pin);
     pwm_set_wrap(slice_num, 255);

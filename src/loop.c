@@ -70,6 +70,8 @@ static void title(char *label) {
         info("Compilation target: Alpakka v0\n");
     #elif defined DEVICE_ALPAKKA_V1
         info("Compilation target: Alpakka v1\n");
+    #elif defined DEVICE_ALPAKKA_LITE
+        info("Compilation target: Alpakka Lite\n");
     #elif defined DEVICE_DONGLE
         info("Compilation target: Dongle\n");
     #elif defined DEVICE_LLAMA
@@ -125,6 +127,7 @@ static void board_led() {
 }
 
 void loop_controller_init() {
+    set_sys_clock_khz(DEVICE_SYS_CLOCK , true);
     led_init();
     stdio_uart_init();
     stdio_init_all();
@@ -149,6 +152,9 @@ void loop_controller_init() {
             set_wireless();
         #endif
     }
+    #if defined DEVICE_ALPAKKA_LITE
+
+    #endif
     loop_run();
 }
 
@@ -250,7 +256,7 @@ void loop_run() {
         // Start timer.
         uint32_t start = time_us_32();
         // Task.
-        #if defined DEVICE_ALPAKKA_V0 || defined DEVICE_ALPAKKA_V1
+        #if defined DEVICE_IS_ALPAKKA
             loop_controller_task();
         #endif
         #ifdef DEVICE_DONGLE

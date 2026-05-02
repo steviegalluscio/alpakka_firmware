@@ -71,8 +71,10 @@ void bus_i2c_io_pcb_gen_determine() {
 }
 
 void bus_i2c_io_cache_update() {
-    io_cache_0 = bus_i2c_read_two(I2C_IO_0, I2C_IO_REG_INPUT);
-    io_cache_1 = bus_i2c_read_two(I2C_IO_1, I2C_IO_REG_INPUT);
+    #ifndef DEVICE_ALPAKKA_LITE
+        io_cache_0 = bus_i2c_read_two(I2C_IO_0, I2C_IO_REG_INPUT);
+        io_cache_1 = bus_i2c_read_two(I2C_IO_1, I2C_IO_REG_INPUT);
+    #endif
 }
 
 bool bus_i2c_io_cache_read(uint8_t device_index, uint8_t bit_index) {
@@ -88,22 +90,22 @@ void bus_spi_write_32(uint8_t cs, uint8_t reg, uint8_t buf[32]) {
     gpio_put(cs, false);
     uint8_t regbuf[33] = {reg};
     memcpy(&regbuf[1], buf, 32);
-    spi_write_blocking(SPI_CHANNEL, regbuf, 33);
+    spi_write_blocking(GET_SPI_CHANNEL(cs), regbuf, 33);
     gpio_put(cs, true);
 }
 
 void bus_spi_write(uint8_t cs, uint8_t reg, uint8_t value) {
     gpio_put(cs, false);
     uint8_t tuple[2] = {reg, value};
-    spi_write_blocking(SPI_CHANNEL, tuple, 2);
+    spi_write_blocking(GET_SPI_CHANNEL(cs), tuple, 2);
     gpio_put(cs, true);
 }
 
 void bus_spi_read(uint8_t cs, uint8_t reg, uint8_t *buf, uint8_t size) {
     gpio_put(cs, false);
     // reg |= 0b10000000;  // Read byte.  // TODO fix IO expander read/write byte
-    spi_write_blocking(SPI_CHANNEL, &reg, 1);
-    spi_read_blocking(SPI_CHANNEL, 0, buf, size);
+    spi_write_blocking(GET_SPI_CHANNEL(cs), &reg, 1);
+    spi_read_blocking(GET_SPI_CHANNEL(cs), 0, buf, size);
     gpio_put(cs, true);
 }
 
@@ -151,6 +153,13 @@ void bus_spi_init() {
     gpio_set_function(PIN_SPI_CK, GPIO_FUNC_SPI);
     gpio_set_function(PIN_SPI_TX, GPIO_FUNC_SPI);
     gpio_set_function(PIN_SPI_RX, GPIO_FUNC_SPI);
+    #ifdef SPI_EXT
+        info("INIT: EXT SPI bus\n");
+        spi_init(SPI_EXT_CHANNEL, SPI_FREQ);
+        gpio_set_function(PIN_SPI_EXT_CK, GPIO_FUNC_SPI);
+        gpio_set_function(PIN_SPI_EXT_TX, GPIO_FUNC_SPI);
+        gpio_set_function(PIN_SPI_EXT_RX, GPIO_FUNC_SPI);
+    #endif
     // IMUs.
     gpio_init(PIN_SPI_CS0);
     gpio_init(PIN_SPI_CS1);
@@ -161,7 +170,9 @@ void bus_spi_init() {
 }
 
 void bus_init() {
-    bus_i2c_init();
-    bus_i2c_io_init();
+    #ifndef DEVICE_ALPAKKA_LITE
+        bus_i2c_init();
+        bus_i2c_io_init();
+    #endif
     bus_spi_init();
 }

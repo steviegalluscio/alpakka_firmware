@@ -8,6 +8,8 @@ int main() {
         loop_controller_init();
     #elif defined DEVICE_ALPAKKA_V1
         loop_controller_init();
+    #elif defined DEVICE_ALPAKKA_LITE
+        loop_controller_init();
     #elif defined DEVICE_DONGLE
         loop_dongle_init();
     #elif defined DEVICE_LLAMA

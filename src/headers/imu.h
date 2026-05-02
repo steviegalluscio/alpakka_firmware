@@ -4,7 +4,7 @@
 #pragma once
 #include "vector.h"
 
-// LSM6DSR
+// LSM6DSR & LSM6DS3
 #define IMU_WHO_AM_I 0x0f  // Identifier address.
 #define IMU_CTRL1_XL 0x10  // Accelerometer config address.
 #define IMU_CTRL2_G 0x11  // Gyroscope config address.
@@ -19,11 +19,24 @@
 
 #define IMU_READ 0b10000000  // Read byte.
 #define IMU_CTRL1_XL_OFF 0b00000000  // Accelerometer value power off.
-#define IMU_CTRL1_XL_2G  0b10100010  // Accelerometer value for 2G range.
-#define IMU_CTRL8_XL_LP  0b00000000  // Accelerometer value for low pass filter.
 #define IMU_CTRL2_G_OFF  0b00000000  // Gyroscope value power off.
-#define IMU_CTRL2_G_125  0b10100010  // Gyroscope value for 125 dps.
-#define IMU_CTRL2_G_500  0b10100100  // Gyroscope value for 500 dps.
+
+#ifdef DEVICE_ALPAKKA_LITE
+    // LSM6DS3
+    #define IMU_ORIENT_CFG_G 0x0b // Gyroscope orientation address.
+    #define IMU_ORIENT_CFG_G_NPN 0b00101000 //-X +Y -Z
+    #define IMU_CTRL1_XL_2G 0b10100000 // Accelerometer value for 2G range at 6.66 kHz ODR
+    // Enables LPF2 at ODR/9=6664/9=~740 Hz cutoff. LSM6DSR uses ODR/4=6667/4=~1666 Hz cutoff. (close enough, feels fine)
+    #define IMU_CTRL8_XL_LP 0b11000000 // [LPF2_EN][HPCF1][HPCF0][0][0][HP_SL_EN][0][LP_6D]
+    #define IMU_CTRL2_G_125 0b10000010 // Gyroscope value for 125 dps at 1.66 kHz ODR
+    #define IMU_CTRL2_G_500 0b10000100 // Gyroscope value for 500 dps at 1.66 kHz ODR
+#else
+    // LSM6DSR
+    #define IMU_CTRL1_XL_2G 0b10100010  // Accelerometer value for 2G range. // [ODR3][ODR2][ODR1][ODR0][FS1][FS0][LPF2_XL_EN][0]
+    #define IMU_CTRL8_XL_LP 0b00000000  // Accelerometer value for low pass filter.
+    #define IMU_CTRL2_G_125 0b10100010  // Gyroscope value for 125 dps at 6.66 kHz ODR
+    #define IMU_CTRL2_G_500 0b10100100  // Gyroscope value for 500 dps at 6.66 kHz ODR
+#endif
 
 #define GYRO_USER_OFFSET_FACTOR 1.5
 

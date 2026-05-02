@@ -19,7 +19,7 @@ With `apt`, `rpm`, `pacman`, `brew`, or the equivalent package manager of your s
 - **cmake**
 
 ## Project dependencies
-- `make install`: Download and configure dependencies automatically.
+- `DEVICE=<device> make install`: Download and configure dependencies automatically.
 
 ## Compilation targets
 - `alpakka_v0`: Alpakka v0.x.x with Raspberry Pico.
