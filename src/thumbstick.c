@@ -85,7 +85,7 @@ void thumbstick_calibrate() {
     float rx = 0;
     float ry = 0;
     thumbstick_calibrate_each(PIN_THUMBSTICK_LX, PIN_THUMBSTICK_LY, &lx, &ly);
-    #ifdef DEVICE_ALPAKKA_V1
+    #if defined DEVICE_ALPAKKA_V1 || defined DEVICE_ALPAKKA_LITE
         thumbstick_calibrate_each(PIN_THUMBSTICK_RX, PIN_THUMBSTICK_RY, &rx, &ry);
     #endif
     config_set_thumbstick_offset(lx, ly, rx, ry);
@@ -94,12 +94,14 @@ void thumbstick_calibrate() {
 
 void thumbstick_init() {
     info("INIT: Thumbstick\n");
-    adc_init();
-    adc_gpio_init(PIN_THUMBSTICK_LX);
-    adc_gpio_init(PIN_THUMBSTICK_LY);
-    #ifdef DEVICE_ALPAKKA_V1
-        adc_gpio_init(PIN_THUMBSTICK_RX);
-        adc_gpio_init(PIN_THUMBSTICK_RY);
+    #ifndef DEVICE_ALPAKKA_LITE
+        adc_init();
+        adc_gpio_init(PIN_THUMBSTICK_LX);
+        adc_gpio_init(PIN_THUMBSTICK_LY);
+        #ifdef DEVICE_ALPAKKA_V1
+            adc_gpio_init(PIN_THUMBSTICK_RX);
+            adc_gpio_init(PIN_THUMBSTICK_RY);
+        #endif
     #endif
     thumbstick_update_offsets();
     thumbstick_update_deadzone();

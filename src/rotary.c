@@ -29,6 +29,7 @@ void rotary_callback(uint gpio, uint32_t events) {
 }
 
 void rotary_init() {
+    if (PIN_ROTARY_A == PIN_NONE || PIN_ROTARY_B == PIN_NONE ) return;
     info("INIT: Rotary\n");
     gpio_init(PIN_ROTARY_A);
     gpio_init(PIN_ROTARY_B);

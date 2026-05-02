@@ -39,6 +39,9 @@ void imu_init_single(uint8_t cs, uint8_t gyro_conf) {
     bus_spi_write(cs, IMU_CTRL1_XL, IMU_CTRL1_XL_2G);
     bus_spi_write(cs, IMU_CTRL8_XL, IMU_CTRL8_XL_LP);
     bus_spi_write(cs, IMU_CTRL2_G, gyro_conf);
+    #ifdef DEVICE_ALPAKKA_LITE
+        bus_spi_write(cs, IMU_ORIENT_CFG_G, IMU_ORIENT_CFG_G_NPN);
+    #endif
     uint8_t xl = bus_spi_read_one(cs, IMU_READ | IMU_CTRL1_XL);
     uint8_t g = bus_spi_read_one(cs, IMU_READ | IMU_CTRL2_G);
     info("  IMU cs=%i id=0x%02x xl=0b%08i g=0b%08i\n", cs, id, bin(xl), bin(g));
@@ -78,17 +81,17 @@ Vector imu_read_gyro_bits(uint8_t cs) {
     double offset_x = (cs==PIN_SPI_CS0) ? offset_gyro_0_x : offset_gyro_1_x;
     double offset_y = (cs==PIN_SPI_CS0) ? offset_gyro_0_y : offset_gyro_1_y;
     double offset_z = (cs==PIN_SPI_CS0) ? offset_gyro_0_z : offset_gyro_1_z;
-    #ifdef DEVICE_ALPAKKA_V0
-        return (Vector){
-            (double)x - offset_x,
-            (double)y - offset_y,
-            (double)z - offset_z,
-        };
-    #else /* DEVICE_ALPAKKA_V1 */
+    #ifdef DEVICE_ALPAKKA_V1
         return (Vector){
             (double)x - offset_x,
             -(double)y - offset_y,
             -(double)z - offset_z,
+        };
+    #else /* DEVICE_ALPAKKA_V0 || DEVICE_ALPAKKA_LITE */
+        return (Vector){
+            (double)x - offset_x,
+            (double)y - offset_y,
+            (double)z - offset_z,
         };
     #endif
 }
@@ -102,16 +105,16 @@ Vector imu_read_accel_bits(uint8_t cs) {
     double offset_x = (cs==PIN_SPI_CS0) ? offset_accel_0_x : offset_accel_1_x;
     double offset_y = (cs==PIN_SPI_CS0) ? offset_accel_0_y : offset_accel_1_y;
     double offset_z = (cs==PIN_SPI_CS0) ? offset_accel_0_z : offset_accel_1_z;
-    #ifdef DEVICE_ALPAKKA_V0
-        return (Vector){
-            (double)x - offset_x,
-            (double)y - offset_y,
-            (double)z - offset_z,
-        };
-    #else /* DEVICE_ALPAKKA_V1 */
+    #ifdef DEVICE_ALPAKKA_V1
         return (Vector){
             -(double)x - offset_x,
             -(double)y - offset_y,
+            (double)z - offset_z,
+        };
+    #else /* DEVICE_ALPAKKA_V0 || DEVICE_ALPAKKA_LITE */
+        return (Vector){
+            (double)x - offset_x,
+            (double)y - offset_y,
             (double)z - offset_z,
         };
     #endif
