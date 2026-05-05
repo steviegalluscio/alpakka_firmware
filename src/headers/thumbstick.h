@@ -116,6 +116,8 @@ struct Thumbstick_struct {
     float rot_flick_time;
     bool rot_keep_value;
     RotationState rot;
+    float virtual_x;
+    float virtual_y;
     Button left;
     Button right;
     Button up;

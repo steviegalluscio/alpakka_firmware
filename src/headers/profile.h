@@ -72,6 +72,7 @@ void profile_report_active();
 void profile_reset_home_sleep(bool now);
 void profile_set_home(bool state);
 void profile_set_home_gamepad(bool state);
+void profile_set_home_virtual_press();
 void profile_set_active(uint8_t index);
 void profile_set_lock_leds(bool lock);
 void profile_set_reported_inputs(bool value);

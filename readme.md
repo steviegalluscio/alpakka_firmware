@@ -26,6 +26,7 @@ With `apt`, `rpm`, `pacman`, `brew`, or the equivalent package manager of your s
 - `alpakka_v1`: Alpakka v1.x.x with Marmota module.
 - `dongle`: Wireless dongle.
 - `llama`: ESP wireless module flasher (ESP-LLAMA repository).
+- `alpakka_lite`: [Alpakka Lite](https://github.com/steviegalluscio/alpakka-lite) with Raspberry Pico.
 
 Example usage:
 ```

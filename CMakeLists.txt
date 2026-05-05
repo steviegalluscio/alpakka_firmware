@@ -39,6 +39,7 @@ if(DEFINED DEVICE)
     elseif(DEVICE MATCHES "alpakka_lite")
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_ALPAKKA_LITE=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_IS_ALPAKKA=1)
+        # TODO: make a lsm6dsv variant too
     elseif(DEVICE MATCHES "dongle")
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_DONGLE=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_HAS_MARMOTA=1)
@@ -133,19 +134,19 @@ if(DEVICE MATCHES "llama")
 endif()
 
 if(DEVICE MATCHES "alpakka_lite")
+    target_sources(${PROJECT} PRIVATE
+        src/passthrough.c
+        ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/dcd_pio_usb.c
+        ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/hcd_pio_usb.c
+    )
     add_subdirectory(deps/Pico-PIO-USB)
     add_subdirectory(deps/tusb_xinput)
     set_target_properties(pico_pio_usb PROPERTIES INTERFACE_COMPILE_OPTIONS "")
-    target_sources(${PROJECT} PRIVATE src/passthrough.c)
     target_link_libraries(${PROJECT} PRIVATE
         tinyusb_host
         pico_pio_usb
         pico_multicore
         xinput_host
-    )
-    target_sources(${PROJECT} PRIVATE
-        ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/dcd_pio_usb.c
-        ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/hcd_pio_usb.c
     )
 endif()
 
