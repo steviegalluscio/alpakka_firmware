@@ -20,12 +20,12 @@ ESPSF_URL=https://github.com/espressif/esp-serial-flasher
 ESPSF_TAG=v1.6.2
 
 # USB host for pico
-PICO_PIO_USB_URL=https://github.com/sekigon-gonnoc/Pico-PIO-USB
-PICO_PIO_USB_TAG=675543bcc9baa8170f868ab7ba316d418dbcf41f
+PICO_PIO_USB_URL=https://github.com/steviegalluscio/Pico-PIO-USB
+PICO_PIO_USB_TAG=c66f27955ba274e1641f0b5929dc2ba68e482f67
 
 # TinyUSB Xinput driver
 TUSB_XINPUT_URL=https://github.com/steviegalluscio/tusb_xinput
-TUSB_XINPUT_TAG=1ebae19c40e206e31d2bb9fc3465dca5cbed8627
+TUSB_XINPUT_TAG=01bf223636c657b254623d393fbbcd28e2b358cd
 
 # ARM toolchain.
 # WEBSITE: https://developer.arm.com/downloads/-/gnu-rm

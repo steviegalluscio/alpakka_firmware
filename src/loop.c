@@ -22,6 +22,10 @@
 #include "pin.h"
 #include "power.h"
 #include "webusb.h"
+#if defined DEVICE_ALPAKKA_LITE
+    #include <pico/multicore.h>
+    #include "passthrough.h"
+#endif
 
 static DeviceMode device_mode = WIRED;
 static bool battery_low = false;
@@ -153,7 +157,7 @@ void loop_controller_init() {
         #endif
     }
     #if defined DEVICE_ALPAKKA_LITE
-
+        multicore_launch_core1(passthrough_core1);
     #endif
     loop_run();
 }
@@ -180,6 +184,9 @@ void loop_controller_task() {
     // Write flash if needed.
     config_sync();
     // Gather values for input sources.
+    #ifdef DEVICE_ALPAKKA_LITE
+        passthrough_report();
+    #endif
     profile_report_active();
     // Report to the correct channel.
     if (device_mode == WIRED) {

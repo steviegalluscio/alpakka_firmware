@@ -73,6 +73,8 @@ Pin numbers from 200 to 215 are IO Expander 2, from pin 0 to pin 15.
 
 // Pico w/ usb gamepad.
 #ifdef DEVICE_ALPAKKA_LITE
+    #define PIN_USB_DP 21  // PIO USB host D+
+    #define PIN_USB_PINOUT 1 // 0 for DM=DP+1, 1 for DM=DP-1
     #define PIN_FUNC 0
     #define PIN_LED_UP PIN_NONE
     #define PIN_LED_LEFT PIN_NONE
@@ -82,7 +84,6 @@ Pin numbers from 200 to 215 are IO Expander 2, from pin 0 to pin 15.
     #define PIN_TOUCH_IN 7
     #define PIN_ROTARY_B PIN_NONE
     #define PIN_ROTARY_A PIN_NONE
-
     // SPI config.
     #define PIN_SPI_CK 2
     #define PIN_SPI_TX 3
@@ -95,7 +96,6 @@ Pin numbers from 200 to 215 are IO Expander 2, from pin 0 to pin 15.
         #define PIN_SPI_EXT_TX 11
         #define PIN_SPI_EXT_RX 12
     #endif
-
     #define PIN_I2C_SDA PIN_NONE
     #define PIN_I2C_SCL PIN_NONE
     #define PIN_HOME PIN_VIRTUAL
@@ -114,8 +114,6 @@ Pin numbers from 200 to 215 are IO Expander 2, from pin 0 to pin 15.
     #define PIN_L2 PIN_VIRTUAL
     #define PIN_L3 PIN_VIRTUAL
     #define PIN_L4 PIN_VIRTUAL
-    //PIN_PCBGEN_0 PIN_NONE
-    //PIN_PCBGEN_1 PIN_NONE
     #define PIN_START_1 PIN_VIRTUAL
     #define PIN_START_2 PIN_VIRTUAL
     #define PIN_A PIN_VIRTUAL
