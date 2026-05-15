@@ -38,7 +38,9 @@ void imu_init_single(uint8_t cs, uint8_t gyro_conf) {
     uint8_t id = bus_spi_read_one(cs, IMU_READ | IMU_WHO_AM_I);
     bus_spi_write(cs, IMU_CTRL1_XL, IMU_CTRL1_XL_2G);
     bus_spi_write(cs, IMU_CTRL8_XL, IMU_CTRL8_XL_LP);
-    bus_spi_write(cs, IMU_CTRL2_G, gyro_conf);
+    bus_spi_write(cs, IMU_CTRL9_XL, IMU_CTRL9_XL_LP);
+    bus_spi_write(cs, IMU_CTRL2_G, IMU_CTRL2_G_ODR);
+    bus_spi_write(cs, IMU_CTRL6_G, gyro_conf);
     uint8_t xl = bus_spi_read_one(cs, IMU_READ | IMU_CTRL1_XL);
     uint8_t g = bus_spi_read_one(cs, IMU_READ | IMU_CTRL2_G);
     info("  IMU cs=%i id=0x%02x xl=0b%08i g=0b%08i\n", cs, id, bin(xl), bin(g));
@@ -52,8 +54,8 @@ void imu_init() {
     info("INIT: IMU\n");
     imu_channel_select();
     imu_load_calibration();
-    imu_init_single(IMU0, IMU_CTRL2_G_500);
-    imu_init_single(IMU1, IMU_CTRL2_G_125);
+    imu_init_single(IMU0, IMU_CTRL6_G_500);
+    imu_init_single(IMU1, IMU_CTRL6_G_125);
 }
 
 void imu_power_off_single(uint8_t cs) {
