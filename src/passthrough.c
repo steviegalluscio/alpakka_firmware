@@ -68,8 +68,8 @@ void __no_inline_not_in_flash_func(passthrough_core1)() {
     info("  tuh_init done\n");
     while (true) {
         if (pause_requested) {
-            info("PASSTHROUGH: paused\n");
             passthrough_pause_loop();
+            info("PASSTHROUGH: resume\n");
         }
         tuh_task();
     }
