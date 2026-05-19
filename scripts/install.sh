@@ -106,21 +106,23 @@ cmake -DCMAKE_INSTALL_PREFIX=./bin -DPICOTOOL_FLAT_INSTALL=1 ..
 make install
 cd ../..
 
-if [ "$DEVICE" = "alpakka_lite_dsv" ] || [ "$DEVICE" = "alpakka_lite_ds3" ]; then
-# Pico Pico-PIO-USB.
-echo "Downloading Pico-PIO-USB..."
-git clone $PICO_PIO_USB_URL
-cd Pico-PIO-USB
-git checkout --quiet $PICO_PIO_USB_TAG
-cd ..
+case "$DEVICE" in
+    alpakka_lite*)
+        # Pico Pico-PIO-USB.
+        echo "Downloading Pico-PIO-USB..."
+        git clone "$PICO_PIO_USB_URL"
+        cd Pico-PIO-USB || exit 1
+        git checkout --quiet "$PICO_PIO_USB_TAG"
+        cd ..
 
-# TinyUSB Xinput.
-echo "Downloading TinyUSB Xinput..."
-git clone $TUSB_XINPUT_URL
-cd tusb_xinput
-git checkout --quiet $TUSB_XINPUT_TAG
-cd ..
-fi
+        # TinyUSB Xinput.
+        echo "Downloading TinyUSB Xinput..."
+        git clone "$TUSB_XINPUT_URL"
+        cd tusb_xinput || exit 1
+        git checkout --quiet "$TUSB_XINPUT_TAG"
+        cd ..
+        ;;
+esac
 
 # Done.
 echo "Dependencies installed"
