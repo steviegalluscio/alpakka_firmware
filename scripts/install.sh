@@ -106,7 +106,7 @@ cmake -DCMAKE_INSTALL_PREFIX=./bin -DPICOTOOL_FLAT_INSTALL=1 ..
 make install
 cd ../..
 
-if [ "$DEVICE" = "alpakka_lite" ]; then
+if [ "$DEVICE" = "alpakka_lite_dsv" ] || [ "$DEVICE" = "alpakka_lite_ds3" ]; then
 # Pico Pico-PIO-USB.
 echo "Downloading Pico-PIO-USB..."
 git clone $PICO_PIO_USB_URL
