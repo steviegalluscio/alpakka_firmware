@@ -24,8 +24,7 @@
 #define NVM_PROFILE_VERSION       ((MAJOR * 1) + (MINOR * 0) + (PATCH * 0))
 
 #define CFG_LED_BRIGHTNESS 0.05
-
-#define CFG_WIRED_TICK_FREQUENCY 750
+#define CFG_WIRED_TICK_FREQUENCY 1000
 #define CFG_WIRELESS_TICK_FREQUENCY 750
 
 #ifndef CFG_TICK_FREQUENCY
@@ -33,7 +32,8 @@
 #endif
 #define REFERENCE_TICK_FREQUENCY 250  // Hz. This used to be the default, it is used for backward compatibility.
 
-#define CFG_IMU_DEADZONE 1.0 // Deadzone for the IMU in pixels per second
+
+#define CFG_IMU_DEADZONE 0 // Deadzone for the IMU in pixels per second            
 #define CFG_IMU_DEADZONE_STRENGTH 0.5 // Strength of the deadzone, the amount of movement reduction near zero.
 
 #define CFG_TICK_INTERVAL_IN_MS  (1000 / CFG_TICK_FREQUENCY)
