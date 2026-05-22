@@ -22,6 +22,15 @@
 #define CFG_TUD_MIDI 0
 #define CFG_TUD_VENDOR 1
 
+#ifdef DEVICE_ALPAKKA_LITE
+    #define CFG_TUH_ENABLED             1
+    #define CFG_TUH_RPI_PIO_USB         1
+    #define CFG_TUH_ENUMERATION_BUFSIZE 256
+    #define CFG_TUH_HUB                 0
+    #define CFG_TUH_DEVICE_MAX          1
+    #define CFG_TUH_XINPUT              1
+#endif
+
 #define ITF_HID 0
 #define ITF_WEBUSB 1
 #define ITF_XINPUT 2

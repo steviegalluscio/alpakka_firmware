@@ -12,7 +12,7 @@ version:
 	sh -e scripts/version.sh
 
 install:
-	sh -e scripts/install.sh
+	sh -e scripts/install.sh $(DEVICE)
 
 clean:
 	rm -rf build

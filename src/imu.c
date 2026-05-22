@@ -76,11 +76,16 @@ void imu_init_single(uint8_t cs, uint8_t gyro_conf) {
     // Accel options.
     bus_spi_write(cs, IMU_CTRL1_XL, IMU_CTRL1_XL_2G);
     bus_spi_write(cs, IMU_CTRL8_XL, IMU_CTRL8_XL_LP);
-    // Gyro options.
-    // bus_spi_write(cs, IMU_CTRL3_C, IMU_CTRL3_C_BDU); // Block data update
-    bus_spi_write(cs, IMU_CTRL4_C, GYRO_LPF1_ENABLE_CTRL4_C); // Enable LPF1
-    bus_spi_write(cs, IMU_CTRL6_C, GYRO_LPF1_223HZ_CTRL6_C); // FTYPE selection for LPF1
-    bus_spi_write(cs, IMU_CTRL2_G, gyro_conf);
+    #ifdef DEVICE_HAS_LSM6DSV
+        //TODO:
+        //bus_spi_write(cs, IMU_CTRL4_C, GYRO_LPF1_ENABLE_CTRL4_C); // Enable LPF1
+        //bus_spi_write(cs, IMU_CTRL6_C, GYRO_LPF1_223HZ_CTRL6_C); // FTYPE selection for LPF1
+        
+        bus_spi_write(cs, IMU_CTRL7_G, IMU_CTRL7_G_LP);
+        bus_spi_write(cs, IMU_CTRL9_XL, IMU_CTRL9_XL_LP);
+        bus_spi_write(cs, IMU_CTRL2_G, IMU_CTRL2_G_ODR);
+        bus_spi_write(cs, IMU_CTRL6_G, gyro_conf);
+    #endif
     uint8_t xl = bus_spi_read_one(cs, IMU_READ | IMU_CTRL1_XL);
     uint8_t g = bus_spi_read_one(cs, IMU_READ | IMU_CTRL2_G);
     info("  IMU cs=%i id=0x%02x xl=0b%08i g=0b%08i\n", cs, id, bin(xl), bin(g));
@@ -94,8 +99,10 @@ void imu_init() {
     info("INIT: IMU\n");
     imu_channel_select();
     imu_load_calibration();
-    imu_init_single(IMU0, IMU_CTRL2_G_500);
-    imu_init_single(IMU1, IMU_CTRL2_G_125);
+    #ifdef DEVICE_HAS_LSM6DSV
+        imu_init_single(IMU0, IMU_CTRL6_G_500);
+        imu_init_single(IMU1, IMU_CTRL6_G_125);
+    #endif
 }
 
 void imu_power_off_single(uint8_t cs) {
@@ -129,6 +136,12 @@ Vector imu_read_gyro_bits(uint8_t cs) {
             (float)y - offset_y,
             (float)z - offset_z,
         };
+    #elif defined DEVICE_ALPAKKA_LITE
+        return (Vector){
+            -(float)x - offset_x,
+            -(float)y - offset_y,
+            (float)z - offset_z,
+        };
     #else /* DEVICE_ALPAKKA_V1 */
         return (Vector){
             (float)x - offset_x,
@@ -155,6 +168,12 @@ Vector imu_read_accel_bits(uint8_t cs) {
             (float)x - offset_x,
             (float)y - offset_y,
             (float)z - offset_z,
+        };
+    #elif defined DEVICE_ALPAKKA_LITE
+        return (Vector){
+            -(float)x - offset_x,
+            (float)y - offset_y,
+            -(float)z - offset_z,
         };
     #else /* DEVICE_ALPAKKA_V1 */
         return (Vector){

@@ -14,7 +14,7 @@ static const char *const descriptor_string[] = {
     #if defined DEVICE_ALPAKKA_V0
         STRING_PRODUCT_ALPAKKA,
         STRING_VERSION_ALPAKKA_V0,
-    #elif defined DEVICE_ALPAKKA_V1
+    #elif defined DEVICE_ALPAKKA_V1 || DEVICE_ALPAKKA_LITE
         STRING_PRODUCT_ALPAKKA,
         STRING_VERSION_ALPAKKA_V1,
     #elif defined DEVICE_DONGLE

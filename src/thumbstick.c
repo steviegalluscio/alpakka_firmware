@@ -68,8 +68,8 @@ void thumbstick_calibrate_each(uint8_t pin_x, uint8_t pin_y, float *result_x, fl
     uint32_t nsamples = CFG_CALIBRATION_SAMPLES_THUMBSTICK;
     info("| 0%%%*s100%% |\n", CFG_CALIBRATION_PROGRESS_BAR - 10, "");
     for(uint32_t i=0; i<nsamples; i++) {
-        x += thumbstick_adc(pin_x);
-        y += thumbstick_adc(pin_y);
+        x += (pin_x == PIN_VIRTUAL) ? 0 : thumbstick_adc(pin_x);
+        y += (pin_y == PIN_VIRTUAL) ? 0 : thumbstick_adc(pin_y);
         if (!(i % (nsamples / CFG_CALIBRATION_PROGRESS_BAR))) info("=");
     }
     x /= CFG_CALIBRATION_SAMPLES_THUMBSTICK;
@@ -85,7 +85,7 @@ void thumbstick_calibrate() {
     float rx = 0;
     float ry = 0;
     thumbstick_calibrate_each(PIN_THUMBSTICK_LX, PIN_THUMBSTICK_LY, &lx, &ly);
-    #ifdef DEVICE_ALPAKKA_V1
+    #if defined DEVICE_ALPAKKA_V1 || defined DEVICE_ALPAKKA_LITE
         thumbstick_calibrate_each(PIN_THUMBSTICK_RX, PIN_THUMBSTICK_RY, &rx, &ry);
     #endif
     config_set_thumbstick_offset(lx, ly, rx, ry);
@@ -94,12 +94,14 @@ void thumbstick_calibrate() {
 
 void thumbstick_init() {
     info("INIT: Thumbstick\n");
-    adc_init();
-    adc_gpio_init(PIN_THUMBSTICK_LX);
-    adc_gpio_init(PIN_THUMBSTICK_LY);
-    #ifdef DEVICE_ALPAKKA_V1
-        adc_gpio_init(PIN_THUMBSTICK_RX);
-        adc_gpio_init(PIN_THUMBSTICK_RY);
+    #ifndef DEVICE_ALPAKKA_LITE
+        adc_init();
+        adc_gpio_init(PIN_THUMBSTICK_LX);
+        adc_gpio_init(PIN_THUMBSTICK_LY);
+        #ifdef DEVICE_ALPAKKA_V1
+            adc_gpio_init(PIN_THUMBSTICK_RX);
+            adc_gpio_init(PIN_THUMBSTICK_RY);
+        #endif
     #endif
     thumbstick_update_offsets();
     thumbstick_update_deadzone();
@@ -236,13 +238,15 @@ void thumbstick_from_ctrl(Thumbstick *thumbstick, CtrlProfile *ctrl, uint8_t ind
 // Class.
 
 void Thumbstick__report(Thumbstick *self) {
+    bool has_virtual_x = self->pin_x == PIN_VIRTUAL;
+    bool has_virtual_y = self->pin_y == PIN_VIRTUAL;
     float offset_x = self->index==0 ? offset_lx : offset_rx;
     float offset_y = self->index==0 ? offset_ly : offset_ry;
     // Do not report if not calibrated.
-    if (offset_x == 0 && offset_y == 0) return;
+    if ((!has_virtual_x && offset_x == 0) && (!has_virtual_y && offset_y == 0)) return;
     // Get values from ADC.
-    float raw_x = thumbstick_adc_smoothed(self->pin_x) - offset_x;
-    float raw_y = thumbstick_adc_smoothed(self->pin_y) - offset_y;
+    float raw_x = ((has_virtual_x) ? self->virtual_x : thumbstick_adc_smoothed(self->pin_x)) - offset_x;
+    float raw_y = ((has_virtual_y) ? self->virtual_y : thumbstick_adc_smoothed(self->pin_y)) - offset_y;
     float x = raw_x / self->saturation;
     float y = raw_y / self->saturation;
     x = constrain(x, -1, 1) * (self->invert_x? -1 : 1);

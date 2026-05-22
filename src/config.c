@@ -605,7 +605,10 @@ uint8_t config_get_problems() {
 }
 
 void config_alert_if_not_calibrated() {
-    if (config_cache.offset_ts_lx == 0 && config_cache.offset_ts_ly == 0) {
+    if (config_cache.offset_ts_lx == 0 &&
+        config_cache.offset_ts_ly == 0 &&
+        config_cache.offset_gyro_0_x == 0 &&
+        config_cache.offset_gyro_0_y == 0) {
         warn("The controller is not calibrated\n");
         warn("Please run calibration\n");
         config_set_problem(PROBLEM_CALIBRATION, true);

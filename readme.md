@@ -19,13 +19,15 @@ With `apt`, `rpm`, `pacman`, `brew`, or the equivalent package manager of your s
 - **cmake**
 
 ## Project dependencies
-- `make install`: Download and configure dependencies automatically.
+- `DEVICE=<device> make install`: Download and configure dependencies automatically.
 
 ## Compilation targets
 - `alpakka_v0`: Alpakka v0.x.x with Raspberry Pico.
 - `alpakka_v1`: Alpakka v1.x.x with Marmota module.
 - `dongle`: Wireless dongle.
 - `llama`: ESP wireless module flasher (ESP-LLAMA repository).
+- `alpakka_lite_dsv`: [Alpakka Lite](https://github.com/steviegalluscio/alpakka-lite) with LSM6DSV and Raspberry Pico.
+- `alpakka_lite_ds3`: [Alpakka Lite](https://github.com/steviegalluscio/alpakka-lite) with LSM6DS3 and Raspberry Pico.
 
 Example usage:
 ```

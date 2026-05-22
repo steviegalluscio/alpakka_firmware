@@ -32,10 +32,16 @@ if(DEFINED DEVICE)
     if(DEVICE MATCHES "alpakka_v0")
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_ALPAKKA_V0=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_IS_ALPAKKA=1)
+        target_compile_definitions(${PROJECT} PUBLIC DEVICE_HAS_LSM6DSV=1)
     elseif(DEVICE MATCHES "alpakka_v1")
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_ALPAKKA_V1=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_IS_ALPAKKA=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_HAS_MARMOTA=1)
+        target_compile_definitions(${PROJECT} PUBLIC DEVICE_HAS_LSM6DSV=1)
+    elseif(DEVICE MATCHES "alpakka_lite_dsv")
+        target_compile_definitions(${PROJECT} PUBLIC DEVICE_ALPAKKA_LITE=1)
+        target_compile_definitions(${PROJECT} PUBLIC DEVICE_IS_ALPAKKA=1)
+        target_compile_definitions(${PROJECT} PUBLIC DEVICE_HAS_LSM6DSV=1)
     elseif(DEVICE MATCHES "dongle")
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_DONGLE=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_HAS_MARMOTA=1)
@@ -129,6 +135,24 @@ if(DEVICE MATCHES "llama")
     target_link_libraries(${PROJECT} PRIVATE flasher)
     target_sources(${PROJECT} PUBLIC deps/esp-serial-flasher/examples/common/example_common.c)
 endif()
+
+if(DEVICE MATCHES "alpakka_lite")
+    target_sources(${PROJECT} PRIVATE
+        src/passthrough.c
+        ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/dcd_pio_usb.c
+        ${PICO_TINYUSB_PATH}/src/portable/raspberrypi/pio_usb/hcd_pio_usb.c
+    )
+    add_subdirectory(deps/Pico-PIO-USB)
+    add_subdirectory(deps/tusb_xinput)
+    set_target_properties(pico_pio_usb PROPERTIES INTERFACE_COMPILE_OPTIONS "")
+    target_link_libraries(${PROJECT} PRIVATE
+        tinyusb_host
+        pico_pio_usb
+        pico_multicore
+        xinput_host
+    )
+endif()
+
 
 pico_enable_stdio_uart(${PROJECT} 1)
 pico_add_extra_outputs(${PROJECT})

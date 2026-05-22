@@ -1,21 +1,31 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2022, Input Labs Oy.
 
+DEVICE="$1"
+
 # Pico SDK.
 SDK_URL=https://github.com/raspberrypi/pico-sdk.git
-SDK_TAG=2.1.0
+SDK_TAG=2.2.0
 
 # Pico Extras.
 EXTRAS_URL=https://github.com/raspberrypi/pico-extras.git
-EXTRAS_TAG=sdk-2.1.0
+EXTRAS_TAG=sdk-2.2.0
 
 # Pico tool.
 PICOTOOL_URL=https://github.com/raspberrypi/picotool.git
-PICOTOOL_TAG=2.1.0
+PICOTOOL_TAG=2.2.0
 
 # ESP serial flasher
 ESPSF_URL=https://github.com/espressif/esp-serial-flasher
 ESPSF_TAG=v1.6.2
+
+# USB host for pico
+PICO_PIO_USB_URL=https://github.com/steviegalluscio/Pico-PIO-USB
+PICO_PIO_USB_TAG=c66f27955ba274e1641f0b5929dc2ba68e482f67
+
+# TinyUSB Xinput driver
+TUSB_XINPUT_URL=https://github.com/steviegalluscio/tusb_xinput
+TUSB_XINPUT_TAG=01bf223636c657b254623d393fbbcd28e2b358cd
 
 # ARM toolchain.
 # WEBSITE: https://developer.arm.com/downloads/-/gnu-rm
@@ -71,6 +81,7 @@ cd pico-extras
 git checkout --quiet $EXTRAS_TAG
 cd ..
 
+if [ "$DEVICE" = "llama" ]; then
 # ESP serial flasher.
 echo "Downloading ESP Serial Flasher..."
 git clone $ESPSF_URL
@@ -80,6 +91,7 @@ echo "Configuring ESP Serial Flasher..."
 git submodule update --init
 python3 ../../scripts/esp_flasher_patch.py
 cd ..
+fi
 
 # Picotool (pico-sdk depends on it now).
 echo "Downloading Picotool..."
@@ -93,6 +105,24 @@ cd build
 cmake -DCMAKE_INSTALL_PREFIX=./bin -DPICOTOOL_FLAT_INSTALL=1 ..
 make install
 cd ../..
+
+case "$DEVICE" in
+    alpakka_lite*)
+        # Pico Pico-PIO-USB.
+        echo "Downloading Pico-PIO-USB..."
+        git clone "$PICO_PIO_USB_URL"
+        cd Pico-PIO-USB || exit 1
+        git checkout --quiet "$PICO_PIO_USB_TAG"
+        cd ..
+
+        # TinyUSB Xinput.
+        echo "Downloading TinyUSB Xinput..."
+        git clone "$TUSB_XINPUT_URL"
+        cd tusb_xinput || exit 1
+        git checkout --quiet "$TUSB_XINPUT_TAG"
+        cd ..
+        ;;
+esac
 
 # Done.
 echo "Dependencies installed"

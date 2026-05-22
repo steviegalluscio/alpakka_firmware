@@ -65,7 +65,7 @@ void Profile__report(Profile *self) {
     self->left_thumbstick.report(&self->left_thumbstick);
     #if defined DEVICE_ALPAKKA_V0
         self->dhat.report(&self->dhat);
-    #elif defined DEVICE_ALPAKKA_V1
+    #elif defined DEVICE_ALPAKKA_V1 || DEVICE_ALPAKKA_LITE
         self->right_thumbstick.report(&self->right_thumbstick);
     #endif
     self->gyro.report(&self->gyro);
@@ -301,6 +301,10 @@ void profile_set_home_gamepad(bool state) {
     }
     pending_reset = true;
     pending_reset_keep = GAMEPAD_HOME;  // Do not reset held gamepad home.
+}
+
+void profile_set_home_virtual_press() {
+    home.virtual_press = true;
 }
 
 void profile_set_active(uint8_t index) {

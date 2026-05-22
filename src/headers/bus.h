@@ -4,6 +4,7 @@
 #pragma once
 #include <stdbool.h>
 #include <stdint.h>
+#include "pin.h"
 
 #define I2C_FREQ 1200 * 1000  // Hz.
 #define SPI_FREQ 20 * 1000 * 1000  // Hz.
@@ -20,12 +21,35 @@
 #define I2C_IO_REG_PULL_DIR 0x48
 
 // Bus channels.
-#if defined DEVICE_ALPAKKA_V0
-    #define I2C_CHANNEL i2c1
-    #define SPI_CHANNEL spi1
-#elif defined DEVICE_HAS_MARMOTA
-    #define I2C_CHANNEL i2c1
+#define I2C_CHANNEL i2c1 // all devices
+
+// spi0 & spi1 valid pins
+#define IS_SPI0_SCK(p) (p==2 || p==6 || p==18 || p==22)
+#define IS_SPI0_TX(p)  (p==3 || p==7 || p==19 || p==23)
+#define IS_SPI0_RX(p)  (p==0 || p==4 || p==16 || p==20)
+#define IS_SPI1_SCK(p) (p==10 || p==14 || p==26)
+#define IS_SPI1_TX(p)  (p==11 || p==15 || p==27)
+#define IS_SPI1_RX(p)  (p==8  || p==12 || p==24 || p==28)
+
+#if IS_SPI0_SCK(PIN_SPI_CK) && IS_SPI0_TX(PIN_SPI_TX) && IS_SPI0_RX(PIN_SPI_RX)
     #define SPI_CHANNEL spi0
+#elif IS_SPI1_SCK(PIN_SPI_CK) && IS_SPI1_TX(PIN_SPI_TX) && IS_SPI1_RX(PIN_SPI_RX)
+    #define SPI_CHANNEL spi1
+#else
+    #error "SPI pins must all belong to the same bus (0 or 1)."
+#endif
+
+#ifdef SPI_EXT
+    #if IS_SPI0_SCK(PIN_SPI_EXT_CK) && IS_SPI0_TX(PIN_SPI_EXT_TX) && IS_SPI0_RX(PIN_SPI_EXT_RX)
+        #define SPI_EXT_CHANNEL spi0
+    #elif IS_SPI1_SCK(PIN_SPI_EXT_CK) && IS_SPI1_TX(PIN_SPI_EXT_TX) && IS_SPI1_RX(PIN_SPI_EXT_RX)
+        #define SPI_EXT_CHANNEL spi1
+    #else
+        #error "SPI_EXT pins must all belong to the same bus (0 or 1)."
+    #endif
+    #define GET_SPI_CHANNEL(cs) ((cs) == PIN_SPI_CS1 ? SPI_EXT_CHANNEL : SPI_CHANNEL)
+#else
+    #define GET_SPI_CHANNEL(cs) (SPI_CHANNEL)
 #endif
 
 typedef enum Tristate_enum {

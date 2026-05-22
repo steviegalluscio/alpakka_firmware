@@ -22,6 +22,10 @@
 #include "pin.h"
 #include "power.h"
 #include "webusb.h"
+#if defined DEVICE_ALPAKKA_LITE
+    #include <pico/multicore.h>
+    #include "passthrough.h"
+#endif
 
 static DeviceMode device_mode = WIRED;
 static bool battery_low = false;
@@ -71,6 +75,8 @@ static void title(char *label) {
         info("Compilation target: Alpakka v0\n");
     #elif defined DEVICE_ALPAKKA_V1
         info("Compilation target: Alpakka v1\n");
+    #elif defined DEVICE_ALPAKKA_LITE
+        info("Compilation target: Alpakka Lite\n");
     #elif defined DEVICE_DONGLE
         info("Compilation target: Dongle\n");
     #elif defined DEVICE_LLAMA
@@ -126,6 +132,7 @@ static void board_led() {
 }
 
 void loop_controller_init() {
+    set_sys_clock_khz(DEVICE_SYS_CLOCK , true);
     led_init();
     stdio_uart_init();
     stdio_init_all();
@@ -150,6 +157,9 @@ void loop_controller_init() {
             set_wireless();
         #endif
     }
+    #if defined DEVICE_ALPAKKA_LITE
+        multicore_launch_core1(passthrough_core1);
+    #endif
     loop_run();
 }
 
@@ -175,6 +185,9 @@ void loop_controller_task() {
     // Write flash if needed.
     config_sync();
     // Gather values for input sources.
+    #ifdef DEVICE_ALPAKKA_LITE
+        passthrough_report();
+    #endif
     profile_report_active();
     // Report to the correct channel.
     if (device_mode == WIRED) {
@@ -254,7 +267,7 @@ void loop_run() {
         i++;
         
         // Task.
-        #if defined DEVICE_ALPAKKA_V0 || defined DEVICE_ALPAKKA_V1
+        #if defined DEVICE_IS_ALPAKKA
         // Start timer.
         uint32_t start = time_us_32();
         loop_controller_task();

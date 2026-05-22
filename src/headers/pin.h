@@ -71,6 +71,65 @@ Pin numbers from 200 to 215 are IO Expander 2, from pin 0 to pin 15.
     #define PIN_R4 207
 #endif
 
+// Pico w/ usb gamepad.
+#ifdef DEVICE_ALPAKKA_LITE
+    #define PIN_USB_DP 21  // PIO USB host D+
+    #define PIN_USB_PINOUT 1 // 0 for DM=DP+1, 1 for DM=DP-1
+    #define PIN_FUNC 0
+    #define PIN_LED_UP PIN_NONE
+    #define PIN_LED_LEFT PIN_NONE
+    #define PIN_LED_DOWN PIN_NONE
+    #define PIN_LED_RIGHT PIN_NONE
+    #define PIN_TOUCH_OUT 6
+    #define PIN_TOUCH_IN 7
+    #define PIN_ROTARY_B PIN_NONE
+    #define PIN_ROTARY_A PIN_NONE
+    // SPI config.
+    #define PIN_SPI_CK 2
+    #define PIN_SPI_TX 3
+    #define PIN_SPI_RX 4
+    #define PIN_SPI_CS0 5
+    #define PIN_SPI_CS1 13
+    #define SPI_EXT 1 // optional dual channel
+    #ifdef SPI_EXT
+        #define PIN_SPI_EXT_CK 10
+        #define PIN_SPI_EXT_TX 11
+        #define PIN_SPI_EXT_RX 12
+    #endif
+    #define PIN_I2C_SDA PIN_NONE
+    #define PIN_I2C_SCL PIN_NONE
+    #define PIN_HOME PIN_VIRTUAL
+    #define PIN_LED_BOARD 25
+    #define PIN_THUMBSTICK_LY PIN_VIRTUAL
+    #define PIN_THUMBSTICK_LX PIN_VIRTUAL
+    #define PIN_THUMBSTICK_RY PIN_VIRTUAL
+    #define PIN_THUMBSTICK_RX PIN_VIRTUAL
+    #define PIN_SELECT_1 PIN_VIRTUAL
+    #define PIN_SELECT_2 PIN_VIRTUAL
+    #define PIN_DPAD_LEFT PIN_VIRTUAL
+    #define PIN_DPAD_RIGHT PIN_VIRTUAL
+    #define PIN_DPAD_UP PIN_VIRTUAL
+    #define PIN_DPAD_DOWN PIN_VIRTUAL
+    #define PIN_L1 PIN_VIRTUAL
+    #define PIN_L2 PIN_VIRTUAL
+    #define PIN_L3 PIN_VIRTUAL
+    #define PIN_L4 PIN_VIRTUAL
+    #define PIN_START_1 PIN_VIRTUAL
+    #define PIN_START_2 PIN_VIRTUAL
+    #define PIN_A PIN_VIRTUAL
+    #define PIN_B PIN_VIRTUAL
+    #define PIN_X PIN_VIRTUAL
+    #define PIN_Y PIN_VIRTUAL
+    #define PIN_DHAT_LEFT PIN_NONE
+    #define PIN_DHAT_RIGHT PIN_NONE
+    #define PIN_DHAT_UP PIN_NONE
+    #define PIN_DHAT_DOWN PIN_NONE
+    #define PIN_R1 PIN_VIRTUAL
+    #define PIN_R2 PIN_VIRTUAL
+    #define PIN_R3 PIN_VIRTUAL
+    #define PIN_R4 PIN_VIRTUAL
+#endif
+
 // Marmota.
 #ifdef DEVICE_HAS_MARMOTA
     #define PIN_FUNC 2
