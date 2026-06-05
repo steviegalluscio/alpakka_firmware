@@ -9,7 +9,8 @@ rebuild: version
 	cd build && make -j16
 
 version:
-	sh -e scripts/version.sh
+	#sh -e scripts/version.sh
+	printf "/* Version pinned for CTRL app compatibility */\n#define VERSION \"1.2.0\"\n" > src/headers/version.h
 
 install:
 	sh -e scripts/install.sh $(DEVICE)
