@@ -1,12 +1,9 @@
-# Alpakka Firmware
+# Alpakka Lite Firmware
 
-*Alpakka controller reference firmware (for Raspberry Pi Pico)*
+*Fork of Alpakka controller reference firmware (for Alpakka Lite with Raspberry Pi Pico)*
 ## Project links
-- [Alpakka Manual](https://inputlabs.io/devices/alpakka/manual).
-- [Alpakka Firmware](https://github.com/inputlabs/alpakka_firmware). _(you are here)_
-- [Alpakka PCB](https://github.com/inputlabs/alpakka_pcb).
-- [Alpakka 3D-print](https://github.com/inputlabs/alpakka_case).
-- [Input Labs Roadmap](https://github.com/orgs/inputlabs/projects/2/views/2).
+- [Alpakka Lite Docs](https://github.com/steviegalluscio/alpakka-lite).
+- [Alpakka Lite Firmware](https://github.com/steviegalluscio/alpakka_firmware/tree/alpakka-lite). _(you are here)_
 
 ## Supported developer operative systems
 - GNU/Linux (and MacOS) - See [Development in Linux](https://inputlabs.io/devices/alpakka/manual/dev_unix).
@@ -22,10 +19,6 @@ With `apt`, `rpm`, `pacman`, `brew`, or the equivalent package manager of your s
 - `DEVICE=<device> make install`: Download and configure dependencies automatically.
 
 ## Compilation targets
-- `alpakka_v0`: Alpakka v0.x.x with Raspberry Pico.
-- `alpakka_v1`: Alpakka v1.x.x with Marmota module.
-- `dongle`: Wireless dongle.
-- `llama`: ESP wireless module flasher (ESP-LLAMA repository).
 - `alpakka_lite_dsv`: [Alpakka Lite](https://github.com/steviegalluscio/alpakka-lite) with LSM6DSV and Raspberry Pico.
 - `alpakka_lite_ds3`: [Alpakka Lite](https://github.com/steviegalluscio/alpakka-lite) with LSM6DS3 and Raspberry Pico.
 
