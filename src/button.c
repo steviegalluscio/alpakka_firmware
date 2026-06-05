@@ -265,7 +265,7 @@ Button Button_ (
     Actions actions_secondary,
     Actions actions_terciary
 ) {
-    if (pin) {
+    if (pin <= PIN_GROUP_SPECIAL && pin > 0) {
         gpio_init(pin);
         gpio_set_dir(pin, GPIO_IN);
         gpio_pull_up(pin);
