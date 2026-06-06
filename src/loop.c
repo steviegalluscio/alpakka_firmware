@@ -23,7 +23,6 @@
 #include "power.h"
 #include "webusb.h"
 #if defined DEVICE_ALPAKKA_LITE
-    #include <pico/multicore.h>
     #include "passthrough.h"
 #endif
 
@@ -157,7 +156,7 @@ void loop_controller_init() {
         #endif
     }
     #if defined DEVICE_ALPAKKA_LITE
-        multicore_launch_core1(passthrough_core1);
+        passthrough_start();
     #endif
     loop_run();
 }

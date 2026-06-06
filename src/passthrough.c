@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <pico/multicore.h>
 #include <pio_usb.h>
 #include <tusb.h>
 #include "passthrough.h"
@@ -17,22 +18,8 @@ static xinput_type_t gamepad_type;
 static volatile bool host_initialized = false;
 static volatile bool pause_requested = false;
 static volatile bool pause_request_ack = false;
+static uint32_t passthrough_core1_stack[2048 / sizeof(uint32_t)] __attribute__((aligned(8)));
 
-static void __no_inline_not_in_flash_func(passthrough_pause_loop)() {
-    uint32_t interrupts = save_and_disable_interrupts();
-    uint32_t next_frame = time_us_32();
-    pause_request_ack = true;
-    while (pause_requested) {
-        uint32_t now = time_us_32();
-        if ((int32_t)(now - next_frame) >= 0) {
-            pio_usb_host_frame_keepalive();
-            next_frame += 1000;
-        }
-        tight_loop_contents();
-    }
-    pause_request_ack = false;
-    restore_interrupts(interrupts);
-}
 
 void __no_inline_not_in_flash_func(passthrough_pause_start)() {
     if (!host_initialized) return;
@@ -48,6 +35,22 @@ void __no_inline_not_in_flash_func(passthrough_pause_end)() {
     while (pause_request_ack) {
         tight_loop_contents();
     }
+}
+
+static void __no_inline_not_in_flash_func(passthrough_pause_loop)() {
+    uint32_t interrupts = save_and_disable_interrupts();
+    uint32_t next_frame = time_us_32();
+    pause_request_ack = true;
+    while (pause_requested) {
+        uint32_t now = time_us_32();
+        if ((int32_t)(now - next_frame) >= 0) {
+            pio_usb_host_frame_keepalive();
+            next_frame += 1000;
+        }
+        tight_loop_contents();
+    }
+    pause_request_ack = false;
+    restore_interrupts(interrupts);
 }
 
 void __no_inline_not_in_flash_func(passthrough_core1)() {
@@ -73,6 +76,14 @@ void __no_inline_not_in_flash_func(passthrough_core1)() {
         }
         tuh_task();
     }
+}
+
+void passthrough_start() {
+    multicore_launch_core1_with_stack(
+        passthrough_core1,
+        passthrough_core1_stack,
+        sizeof(passthrough_core1_stack)
+    );
 }
 
 bool passthrough_get_input(passthrough_input_t *output) {

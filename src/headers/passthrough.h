@@ -35,7 +35,7 @@ typedef struct {
 } passthrough_input_t;
 #pragma pack(pop)
 
-void passthrough_core1();
+void passthrough_start();
 void passthrough_report();
 bool passthrough_get_input(passthrough_input_t *output);
 void passthrough_pause_start();
