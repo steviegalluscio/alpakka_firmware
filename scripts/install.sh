@@ -25,7 +25,7 @@ PICO_PIO_USB_TAG=c66f27955ba274e1641f0b5929dc2ba68e482f67
 
 # TinyUSB Xinput driver
 TUSB_XINPUT_URL=https://github.com/steviegalluscio/tusb_xinput
-TUSB_XINPUT_TAG=01bf223636c657b254623d393fbbcd28e2b358cd
+TUSB_XINPUT_TAG=a5b5ce4cac64982ec4b5d6bbaadb2e2aa69cd4d3
 
 # ARM toolchain.
 # WEBSITE: https://developer.arm.com/downloads/-/gnu-rm

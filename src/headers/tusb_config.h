@@ -28,7 +28,7 @@
     #define CFG_TUH_ENUMERATION_BUFSIZE 256
     #define CFG_TUH_HUB                 0
     #define CFG_TUH_DEVICE_MAX          1
-    #define CFG_TUH_XINPUT              1
+    #define CFG_TUH_XINPUT              2
 #endif
 
 #define ITF_HID 0

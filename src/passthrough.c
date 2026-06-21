@@ -14,7 +14,6 @@
 
 auto_init_mutex(passthrough_mutex);
 static passthrough_input_t gamepad;
-static xinput_type_t gamepad_type;
 static volatile bool host_initialized = false;
 static volatile bool pause_requested = false;
 static volatile bool pause_request_ack = false;
@@ -102,8 +101,7 @@ void passthrough_report() {
     if (passthrough_get_input(&input)) {
         if(input.bits.guide) profile_set_home_virtual_press();
         profile->select_1.virtual_press = input.bits.back;
-        profile->select_2.virtual_press =
-            gamepad_type == TEGENARIA ? input.bits.capture : input.bits.share;
+        profile->select_2.virtual_press = input.bits.capture || input.bits.share;
         profile->start_1.virtual_press = input.bits.start;
         profile->start_2.virtual_press = input.bits.mode; // TEGENARIA only
         profile->dpad_down.virtual_press = input.bits.dpad_down;
@@ -182,17 +180,18 @@ void tuh_xinput_report_received_cb(uint8_t dev_addr, uint8_t instance, xinputh_i
         {
             debug("[%02x, %02x], Type %s, Buttons %04x, LT: %02x RT: %02x, LX: %d, LY: %d, RX: %d, RY: %d\n",
                 dev_addr, instance, xinput_type_to_str(xid_itf->type), p->wButtons, p->bLeftTrigger, p->bRightTrigger, p->sThumbLX, p->sThumbLY, p->sThumbRX, p->sThumbRY);
-            passthrough_input_t input = {0};
-            input.raw.standard_btns = p->wButtons;
-            input.raw.vendor_btns = p->bVendorButtons;
-            input.bits.l2 = p->bLeftTrigger > TRIGGER_THRESHOLD;
-            input.bits.r2 = p->bRightTrigger > TRIGGER_THRESHOLD;
-            input.thumbstick_lx = p->sThumbLX;
-            input.thumbstick_ly = p->sThumbLY;
-            input.thumbstick_rx = p->sThumbRX;
-            input.thumbstick_ry = p->sThumbRY;
             mutex_enter_blocking(&passthrough_mutex);
-            gamepad = input;
+            if (xid_itf->type == TEGENARIA) {
+                gamepad.raw.vendor_btns = p->bVendorButtons;
+            } else {
+                gamepad.raw.standard_btns = p->wButtons;
+                gamepad.bits.l2 = p->bLeftTrigger > TRIGGER_THRESHOLD;
+                gamepad.bits.r2 = p->bRightTrigger > TRIGGER_THRESHOLD;
+                gamepad.thumbstick_lx = p->sThumbLX;
+                gamepad.thumbstick_ly = p->sThumbLY;
+                gamepad.thumbstick_rx = p->sThumbRX;
+                gamepad.thumbstick_ry = p->sThumbRY;
+            }
             mutex_exit(&passthrough_mutex);
         }
     }
@@ -201,10 +200,10 @@ void tuh_xinput_report_received_cb(uint8_t dev_addr, uint8_t instance, xinputh_i
 
 void tuh_xinput_mount_cb(uint8_t dev_addr, uint8_t instance, const xinputh_interface_t *xinput_itf)
 {
-    gamepad_type = xinput_itf->type;
-    info("PASSTHROUGH: %s mounted addr=%02x instance=%d\n", xinput_type_to_str(gamepad_type), dev_addr, instance);
+    const char *gamepad_type = xinput_type_to_str(xinput_itf->type);
+    info("PASSTHROUGH: %s mounted addr=%02x instance=%d\n", gamepad_type, dev_addr, instance);
     bool received = tuh_xinput_receive_report(dev_addr, instance);
-    if(received) info("PASSTHROUGH: controller report received\n");
+    if(received) info("PASSTHROUGH: %s controller report received\n", gamepad_type);
 }
 
 void tuh_xinput_umount_cb(uint8_t dev_addr, uint8_t instance)
