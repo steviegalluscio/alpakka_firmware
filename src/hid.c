@@ -601,6 +601,7 @@ ReportType hid_get_priority() {
 
 bool hid_report_wired() {
     if (!hid_allow_communication) return true;
+    uint8_t protocol = config_get_protocol();
     ReportType device_to_report = hid_get_priority();
     tud_task();
     if (tud_ready()) {
@@ -611,7 +612,9 @@ bool hid_report_wired() {
             if (device_to_report == REPORT_MOUSE) hid_report_mouse(true);
             if (device_to_report == REPORT_GAMEPAD) hid_report_gamepad(true);
         }
-        if (device_to_report == REPORT_XINPUT) {
+        // Report XInput every loop instead of throttling it by priority like the HID keyboard/mouse/gamepad
+        // It uses a separate endpoint so it will be fine
+        if (protocol == PROTOCOL_XINPUT_WIN || protocol == PROTOCOL_XINPUT_UNIX) {
             if (tud_suspended()) tud_remote_wakeup();
             hid_report_xinput(true);
         }
