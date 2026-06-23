@@ -7,6 +7,7 @@
 #include <pio_usb.h>
 #include <tusb.h>
 #include "passthrough.h"
+#include "lite_compat.h"
 #include "pin.h"
 #include "xinput_host.h"
 #include "profile.h"
@@ -94,6 +95,32 @@ bool passthrough_get_input(passthrough_input_t *output) {
     return false;
 }
 
+static bool passthrough_gyro_engage_pressed(uint8_t engage, passthrough_input_t *input) {
+    switch (engage) {
+        case ALPAKKA_V1_CTRL_PIN_A:          return input->bits.a;
+        case ALPAKKA_V1_CTRL_PIN_B:          return input->bits.b;
+        case ALPAKKA_V1_CTRL_PIN_X:          return input->bits.x;
+        case ALPAKKA_V1_CTRL_PIN_Y:          return input->bits.y;
+        case ALPAKKA_V1_CTRL_PIN_DPAD_LEFT:  return input->bits.dpad_left;
+        case ALPAKKA_V1_CTRL_PIN_DPAD_RIGHT: return input->bits.dpad_right;
+        case ALPAKKA_V1_CTRL_PIN_DPAD_UP:    return input->bits.dpad_up;
+        case ALPAKKA_V1_CTRL_PIN_DPAD_DOWN:  return input->bits.dpad_down;
+        case ALPAKKA_V1_CTRL_PIN_L1:         return input->bits.l1;
+        case ALPAKKA_V1_CTRL_PIN_L2:         return input->bits.l2;
+        case ALPAKKA_V1_CTRL_PIN_L3:         return input->bits.l3;
+        case ALPAKKA_V1_CTRL_PIN_L4:         return input->bits.paddle_l;
+        case ALPAKKA_V1_CTRL_PIN_R1:         return input->bits.r1;
+        case ALPAKKA_V1_CTRL_PIN_R2:         return input->bits.r2;
+        case ALPAKKA_V1_CTRL_PIN_R3:         return input->bits.r3;
+        case ALPAKKA_V1_CTRL_PIN_R4:         return input->bits.paddle_r;
+        case ALPAKKA_V1_CTRL_PIN_SELECT_1:   return input->bits.back;
+        case ALPAKKA_V1_CTRL_PIN_SELECT_2:   return input->bits.capture || input->bits.share;
+        case ALPAKKA_V1_CTRL_PIN_START_1:    return input->bits.start;
+        case ALPAKKA_V1_CTRL_PIN_START_2:    return input->bits.mode;
+        default:                             return false;
+    }
+}
+
 // core0
 void passthrough_report() {
     Profile *profile = profile_get_active(false);
@@ -134,6 +161,10 @@ void passthrough_report() {
         profile->right_thumbstick.invert_x = false;
         profile->right_thumbstick.invert_y = true;
 
+        if (profile->gyro.engage != PIN_NONE && profile->gyro.engage != PIN_TOUCH_IN) {
+            profile->gyro.engage_button.virtual_press =
+                passthrough_gyro_engage_pressed(profile->gyro.engage, &input);
+        }
         /*
         if (input.thumbstick_lx) info("Thumbstick LX: %d\n", input.thumbstick_lx);
         if (input.thumbstick_ly) info("Thumbstick LY: %d\n", input.thumbstick_ly);

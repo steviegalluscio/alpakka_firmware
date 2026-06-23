@@ -230,6 +230,10 @@ void Gyro__config_z(Gyro *self, double min, double max, Actions neg, Actions pos
     self->sens_z = sens;
 }
 
+#ifdef DEVICE_ALPAKKA_LITE
+    #include "lite_compat.h"
+#endif
+
 Gyro Gyro_ (
     GyroMode mode,
     uint8_t engage
@@ -244,10 +248,17 @@ Gyro Gyro_ (
     gyro.config_y = Gyro__config_y;
     gyro.config_z = Gyro__config_z;
     gyro.mode = mode;
+    #ifdef DEVICE_ALPAKKA_LITE
+        if (engage == ALPAKKA_V1_CTRL_PIN_HEXAGON) engage = PIN_TOUCH_IN;
+    #endif
     gyro.engage = engage;
     if (engage != PIN_NONE && engage != PIN_TOUCH_IN) {
         Actions none = {0,};
-        gyro.engage_button = Button_(engage, NORMAL, none, none, none);
+        #ifdef DEVICE_ALPAKKA_LITE
+            gyro.engage_button = Button_(PIN_VIRTUAL, NORMAL, none, none, none);
+        #else
+            gyro.engage_button = Button_(engage, NORMAL, none, none, none);
+        #endif
     }
     memset(gyro.actions_x_pos, 0, ACTIONS_LEN);
     memset(gyro.actions_y_pos, 0, ACTIONS_LEN);
