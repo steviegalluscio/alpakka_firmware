@@ -19,12 +19,16 @@ With `apt`, `rpm`, `pacman`, `brew`, or the equivalent package manager of your s
 - `DEVICE=<device> make install`: Download and configure dependencies automatically.
 
 ## Compilation targets
+- `alpakka_lite`: Alias for `alpakka_lite_dsv`.
 - `alpakka_lite_dsv`: [Alpakka Lite](https://github.com/steviegalluscio/alpakka-lite) with LSM6DSV and Raspberry Pico.
 - `alpakka_lite_ds3`: [Alpakka Lite](https://github.com/steviegalluscio/alpakka-lite) with LSM6DS3 and Raspberry Pico.
 
 Example usage:
 ```
-DEVICE=alpakka_v1 make
+DEVICE=alpakka_lite make
+```
+```
+DEVICE=alpakka_lite CFG_TICK_FREQUENCY=500 CFG_IMU_TICK_SAMPLES=64 make
 ```
 
 ## Development commands

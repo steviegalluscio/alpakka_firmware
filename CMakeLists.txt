@@ -36,11 +36,11 @@ if(DEFINED DEVICE)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_ALPAKKA_V1=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_IS_ALPAKKA=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_HAS_MARMOTA=1)
-    elseif(DEVICE MATCHES "alpakka_lite_dsv")
+    elseif(DEVICE MATCHES "^(alpakka_lite|alpakka_lite_dsv)$")
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_ALPAKKA_LITE=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_IS_ALPAKKA=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_HAS_LSM6DSV=1)
-    elseif(DEVICE MATCHES "alpakka_lite_ds3")
+    elseif(DEVICE MATCHES "^alpakka_lite_ds3$")
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_ALPAKKA_LITE=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_IS_ALPAKKA=1)
         target_compile_definitions(${PROJECT} PUBLIC DEVICE_HAS_LSM6DS3=1)
@@ -59,6 +59,16 @@ endif()
 
 # Enable all warnings and promote them to errors.
 target_compile_options(${PROJECT} PRIVATE -Wall -Werror)
+
+if(DEFINED CFG_TICK_FREQUENCY)
+    message(STATUS "CFG_TICK_FREQUENCY=${CFG_TICK_FREQUENCY}")
+    target_compile_definitions(${PROJECT} PUBLIC CFG_TICK_FREQUENCY=${CFG_TICK_FREQUENCY})
+endif()
+
+if(DEFINED CFG_IMU_TICK_SAMPLES)
+    message(STATUS "CFG_IMU_TICK_SAMPLES=${CFG_IMU_TICK_SAMPLES}")
+    target_compile_definitions(${PROJECT} PUBLIC CFG_IMU_TICK_SAMPLES=${CFG_IMU_TICK_SAMPLES})
+endif()
 
 target_link_libraries(${PROJECT} PRIVATE
     pico_stdlib

@@ -25,13 +25,17 @@
 
 #define CFG_LED_BRIGHTNESS 0.2
 
-#ifdef DEVICE_DONGLE
-    #define CFG_TICK_FREQUENCY 1000  // Hz.
-#else
-    #define CFG_TICK_FREQUENCY 250  // Hz.
+#ifndef CFG_TICK_FREQUENCY
+    #ifdef DEVICE_DONGLE
+        #define CFG_TICK_FREQUENCY 1000  // Hz.
+    #else
+        #define CFG_TICK_FREQUENCY 250  // Hz.
+    #endif
 #endif
 
-#define CFG_IMU_TICK_SAMPLES 128  // Multi-sampling per pooling cycle.
+#ifndef CFG_IMU_TICK_SAMPLES
+    #define CFG_IMU_TICK_SAMPLES 128  // Multi-sampling per pooling cycle.
+#endif
 
 #define CFG_TICK_INTERVAL_IN_MS  (1000 / CFG_TICK_FREQUENCY)
 #define CFG_TICK_INTERVAL_IN_US  (1000000 / CFG_TICK_FREQUENCY)

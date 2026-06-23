@@ -1,9 +1,17 @@
 # SPDX-License-Identifier: GPL-2.0-only
 # Copyright (C) 2022, Input Labs Oy.
 
+CMAKE_ARGS = -DDEVICE=$(DEVICE) -UCFG_TICK_FREQUENCY -UCFG_IMU_TICK_SAMPLES
+ifdef CFG_TICK_FREQUENCY
+	CMAKE_ARGS += -DCFG_TICK_FREQUENCY=$(CFG_TICK_FREQUENCY)
+endif
+ifdef CFG_IMU_TICK_SAMPLES
+	CMAKE_ARGS += -DCFG_IMU_TICK_SAMPLES=$(CFG_IMU_TICK_SAMPLES)
+endif
+
 default: version
 	mkdir -p build
-	cmake . -B build -DDEVICE=${DEVICE} && cd build && make -j16
+	cmake . -B build $(CMAKE_ARGS) && cd build && make -j16
 
 rebuild: version
 	cd build && make -j16
