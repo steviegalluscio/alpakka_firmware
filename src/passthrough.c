@@ -97,26 +97,26 @@ bool passthrough_get_input(passthrough_input_t *output) {
 
 static bool passthrough_gyro_engage_pressed(uint8_t engage, passthrough_input_t *input) {
     switch (engage) {
+        case ALPAKKA_V1_CTRL_PIN_SELECT_1:   return input->bits.back;
+        case ALPAKKA_V1_CTRL_PIN_SELECT_2:   return input->bits.capture || input->bits.share;
+        case ALPAKKA_V1_CTRL_PIN_START_1:    return input->bits.start;
+        case ALPAKKA_V1_CTRL_PIN_START_2:    return input->bits.mode;
+        case ALPAKKA_V1_CTRL_PIN_DPAD_DOWN:  return input->bits.dpad_down;
+        case ALPAKKA_V1_CTRL_PIN_DPAD_RIGHT: return input->bits.dpad_right;
+        case ALPAKKA_V1_CTRL_PIN_DPAD_LEFT:  return input->bits.dpad_left;
+        case ALPAKKA_V1_CTRL_PIN_DPAD_UP:    return input->bits.dpad_up;
         case ALPAKKA_V1_CTRL_PIN_A:          return input->bits.a;
         case ALPAKKA_V1_CTRL_PIN_B:          return input->bits.b;
         case ALPAKKA_V1_CTRL_PIN_X:          return input->bits.x;
         case ALPAKKA_V1_CTRL_PIN_Y:          return input->bits.y;
-        case ALPAKKA_V1_CTRL_PIN_DPAD_LEFT:  return input->bits.dpad_left;
-        case ALPAKKA_V1_CTRL_PIN_DPAD_RIGHT: return input->bits.dpad_right;
-        case ALPAKKA_V1_CTRL_PIN_DPAD_UP:    return input->bits.dpad_up;
-        case ALPAKKA_V1_CTRL_PIN_DPAD_DOWN:  return input->bits.dpad_down;
         case ALPAKKA_V1_CTRL_PIN_L1:         return input->bits.l1;
         case ALPAKKA_V1_CTRL_PIN_L2:         return input->bits.l2;
         case ALPAKKA_V1_CTRL_PIN_L3:         return input->bits.l3;
         case ALPAKKA_V1_CTRL_PIN_L4:         return input->bits.paddle_l;
         case ALPAKKA_V1_CTRL_PIN_R1:         return input->bits.r1;
         case ALPAKKA_V1_CTRL_PIN_R2:         return input->bits.r2;
-        case ALPAKKA_V1_CTRL_PIN_R3:         return input->bits.r3;
         case ALPAKKA_V1_CTRL_PIN_R4:         return input->bits.paddle_r;
-        case ALPAKKA_V1_CTRL_PIN_SELECT_1:   return input->bits.back;
-        case ALPAKKA_V1_CTRL_PIN_SELECT_2:   return input->bits.capture || input->bits.share;
-        case ALPAKKA_V1_CTRL_PIN_START_1:    return input->bits.start;
-        case ALPAKKA_V1_CTRL_PIN_START_2:    return input->bits.mode;
+        case ALPAKKA_V1_CTRL_PIN_R3:         return input->bits.r3;
         default:                             return false;
     }
 }
