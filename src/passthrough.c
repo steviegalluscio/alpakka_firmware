@@ -87,12 +87,14 @@ void passthrough_start() {
 }
 
 bool passthrough_get_input(passthrough_input_t *output) {
-    if(mutex_try_enter(&passthrough_mutex, NULL)){
-        *output = gamepad;
+    static passthrough_input_t last_input = {0};
+    bool fresh = mutex_try_enter(&passthrough_mutex, NULL);
+    if (fresh) {
+        last_input = gamepad;
         mutex_exit(&passthrough_mutex);
-        return true;
     }
-    return false;
+    *output = last_input;
+    return fresh;
 }
 
 static bool passthrough_gyro_engage_pressed(uint8_t engage, passthrough_input_t *input) {
