@@ -127,75 +127,74 @@ static bool passthrough_gyro_engage_pressed(uint8_t engage, passthrough_input_t 
 void passthrough_report() {
     Profile *profile = profile_get_active(false);
     passthrough_input_t input;
-    if (passthrough_get_input(&input)) {
-        if(input.bits.guide) profile_set_home_virtual_press();
-        profile->select_1.virtual_press = input.bits.back;
-        profile->select_2.virtual_press = input.bits.capture || input.bits.share;
-        profile->start_1.virtual_press = input.bits.start;
-        profile->start_2.virtual_press = input.bits.mode; // TEGENARIA only
-        profile->dpad_down.virtual_press = input.bits.dpad_down;
-        profile->dpad_right.virtual_press = input.bits.dpad_right;
-        profile->dpad_left.virtual_press = input.bits.dpad_left;
-        profile->dpad_up.virtual_press = input.bits.dpad_up;
-        profile->a.virtual_press = input.bits.a;
-        profile->b.virtual_press = input.bits.b;
-        profile->x.virtual_press = input.bits.x;
-        profile->y.virtual_press = input.bits.y;
-        profile->l1.virtual_press = input.bits.l1;
-        profile->l2.virtual_press = input.bits.l2;
-        profile->l3.virtual_press = input.bits.l3; // We use thumbstick.push for this
-        profile->l4.virtual_press = input.bits.paddle_l;
-        profile->r1.virtual_press = input.bits.r1;
-        profile->r2.virtual_press = input.bits.r2;
-        profile->r4.virtual_press = input.bits.paddle_r;
+    passthrough_get_input(&input);
+    if(input.bits.guide) profile_set_home_virtual_press();
+    profile->select_1.virtual_press = input.bits.back;
+    profile->select_2.virtual_press = input.bits.capture || input.bits.share;
+    profile->start_1.virtual_press = input.bits.start;
+    profile->start_2.virtual_press = input.bits.mode; // TEGENARIA only
+    profile->dpad_down.virtual_press = input.bits.dpad_down;
+    profile->dpad_right.virtual_press = input.bits.dpad_right;
+    profile->dpad_left.virtual_press = input.bits.dpad_left;
+    profile->dpad_up.virtual_press = input.bits.dpad_up;
+    profile->a.virtual_press = input.bits.a;
+    profile->b.virtual_press = input.bits.b;
+    profile->x.virtual_press = input.bits.x;
+    profile->y.virtual_press = input.bits.y;
+    profile->l1.virtual_press = input.bits.l1;
+    profile->l2.virtual_press = input.bits.l2;
+    profile->l3.virtual_press = input.bits.l3; // We use thumbstick.push for this
+    profile->l4.virtual_press = input.bits.paddle_l;
+    profile->r1.virtual_press = input.bits.r1;
+    profile->r2.virtual_press = input.bits.r2;
+    profile->r4.virtual_press = input.bits.paddle_r;
 
-        profile->left_thumbstick.push.virtual_press = input.bits.l3;
-        profile->left_thumbstick.virtual_x  = input.thumbstick_lx / 32767.0f;
-        profile->left_thumbstick.virtual_y  = input.thumbstick_ly / 32767.0f;
-        profile->left_thumbstick.saturation = 1.0f;
-        profile->left_thumbstick.invert_x = false;
-        profile->left_thumbstick.invert_y = true;
+    profile->left_thumbstick.push.virtual_press = input.bits.l3;
+    profile->left_thumbstick.virtual_x  = input.thumbstick_lx / 32767.0f;
+    profile->left_thumbstick.virtual_y  = input.thumbstick_ly / 32767.0f;
+    profile->left_thumbstick.saturation = 1.0f;
+    profile->left_thumbstick.invert_x = false;
+    profile->left_thumbstick.invert_y = true;
 
-        profile->right_thumbstick.push.virtual_press = input.bits.r3;
-        profile->right_thumbstick.virtual_x  = input.thumbstick_rx / 32767.0f;
-        profile->right_thumbstick.virtual_y  = input.thumbstick_ry / 32767.0f;
-        profile->right_thumbstick.saturation = 1.0f;
-        profile->right_thumbstick.invert_x = false;
-        profile->right_thumbstick.invert_y = true;
+    profile->right_thumbstick.push.virtual_press = input.bits.r3;
+    profile->right_thumbstick.virtual_x  = input.thumbstick_rx / 32767.0f;
+    profile->right_thumbstick.virtual_y  = input.thumbstick_ry / 32767.0f;
+    profile->right_thumbstick.saturation = 1.0f;
+    profile->right_thumbstick.invert_x = false;
+    profile->right_thumbstick.invert_y = true;
 
-        if (profile->gyro.engage != PIN_NONE && profile->gyro.engage != PIN_TOUCH_IN) {
-            profile->gyro.engage_button.virtual_press =
-                passthrough_gyro_engage_pressed(profile->gyro.engage, &input);
-        }
-        /*
-        if (input.thumbstick_lx) info("Thumbstick LX: %d\n", input.thumbstick_lx);
-        if (input.thumbstick_ly) info("Thumbstick LY: %d\n", input.thumbstick_ly);
-        if (input.thumbstick_rx) info("Thumbstick RX: %d\n", input.thumbstick_rx);
-        if (input.thumbstick_ry) info("Thumbstick RY: %d\n", input.thumbstick_ry);
-        if (input.bits.dpad_up) info("DPAD_UP\n");
-        if (input.bits.dpad_down) info("DPAD_DOWN\n");
-        if (input.bits.dpad_left) info("DPAD_LEFT\n");
-        if (input.bits.dpad_right) info("DPAD_RIGHT\n");
-        if (input.bits.start) info("START\n");
-        if (input.bits.back) info("BACK\n");
-        if (input.bits.l3) info("LEFT_THUMB\n");
-        if (input.bits.r3) info("RIGHT_THUMB\n");
-        if (input.bits.l1) info("LEFT_SHOULDER\n");
-        if (input.bits.r1) info("RIGHT_SHOULDER\n");
-        if (input.bits.l2) info("LEFT_TRIGGER\n");
-        if (input.bits.r2) info("RIGHT_TRIGGER\n");
-        //if (input.bits.guide) info("GUIDE\n"); // Home
-        if (input.bits.share) info("SHARE\n");
-        if (input.bits.a) info("A\n");
-        if (input.bits.b) info("B\n");
-        if (input.bits.x) info("X\n");
-        if (input.bits.y) info("Y\n");
-        if (input.bits.mode) info("MODE\n");
-        if (input.bits.capture) info("CAPTURE\n");
-        if (input.bits.paddle_l) info("PADDLE_L\n");
-        if (input.bits.paddle_r) info("PADDLE_R\n");
-        */
+    if (profile->gyro.engage != PIN_NONE && profile->gyro.engage != PIN_TOUCH_IN) {
+        profile->gyro.engage_button.virtual_press =
+            passthrough_gyro_engage_pressed(profile->gyro.engage, &input);
     }
+    /*
+    if (input.thumbstick_lx) info("Thumbstick LX: %d\n", input.thumbstick_lx);
+    if (input.thumbstick_ly) info("Thumbstick LY: %d\n", input.thumbstick_ly);
+    if (input.thumbstick_rx) info("Thumbstick RX: %d\n", input.thumbstick_rx);
+    if (input.thumbstick_ry) info("Thumbstick RY: %d\n", input.thumbstick_ry);
+    if (input.bits.dpad_up) info("DPAD_UP\n");
+    if (input.bits.dpad_down) info("DPAD_DOWN\n");
+    if (input.bits.dpad_left) info("DPAD_LEFT\n");
+    if (input.bits.dpad_right) info("DPAD_RIGHT\n");
+    if (input.bits.start) info("START\n");
+    if (input.bits.back) info("BACK\n");
+    if (input.bits.l3) info("LEFT_THUMB\n");
+    if (input.bits.r3) info("RIGHT_THUMB\n");
+    if (input.bits.l1) info("LEFT_SHOULDER\n");
+    if (input.bits.r1) info("RIGHT_SHOULDER\n");
+    if (input.bits.l2) info("LEFT_TRIGGER\n");
+    if (input.bits.r2) info("RIGHT_TRIGGER\n");
+    //if (input.bits.guide) info("GUIDE\n"); // Home
+    if (input.bits.share) info("SHARE\n");
+    if (input.bits.a) info("A\n");
+    if (input.bits.b) info("B\n");
+    if (input.bits.x) info("X\n");
+    if (input.bits.y) info("Y\n");
+    if (input.bits.mode) info("MODE\n");
+    if (input.bits.capture) info("CAPTURE\n");
+    if (input.bits.paddle_l) info("PADDLE_L\n");
+    if (input.bits.paddle_r) info("PADDLE_R\n");
+    */
 }
 
 usbh_class_driver_t const* usbh_app_driver_get_cb(uint8_t* driver_count){
